@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
+import 'package:flutter_calories_calculator/database.dart';
+import 'package:flutter_calories_calculator/mealPlan.dart';
+import 'package:flutter_calories_calculator/mealplans_page.dart';
 import 'food.dart';
 
 
@@ -9,13 +12,40 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  var fido = const Food(
+  var apple = const Food(
     id: 0,
-    name: 'Fido',
-    calories: 35,
+    name: 'Apple',
+    calories: 59,
+  );
+var banana = const Food(
+    id: 0,
+    name: 'banana',
+    calories: 151,
+  );
+var grapes = const Food(
+    id: 0,
+    name: 'grapes',
+    calories: 100,
+  );
+var Cheeseburger = const Food(
+    id: 0,
+    name: 'cheeseburger',
+    calories: 285,
+  );
+var Pizza = const Food(
+    id: 0,
+    name: 'pizza',
+    calories: 285,
   );
 
-  // await insertFood(fido);
+  await DatabaseHelper.instance.insertFood(apple);
+  await DatabaseHelper.instance.insertFood(banana);
+  await DatabaseHelper.instance.insertFood(Cheeseburger);
+  await DatabaseHelper.instance.insertFood(Pizza);
+  await DatabaseHelper.instance.insertFood(grapes);
+
+
+
 
   runApp(const MyApp());
 }
@@ -30,27 +60,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'flutter_calories_calculator',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a blue toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MealPlansPage(),//const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
   
