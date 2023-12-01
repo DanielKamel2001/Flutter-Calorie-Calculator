@@ -104,6 +104,10 @@ class DatabaseHelper {
     final db = await instance.database;
     return db.update(tableMealPlans, mealPlan.toMap(),where: '${MealPlanFields.id} = ?', whereArgs: [mealPlan.id],);
   }
+  Future<int> deleteMealPlan(int id )async{
+    final db = await instance.database;
+    return db.delete(tableMealPlans, where: '${MealPlanFields.id} = ?', whereArgs: [id],);
+  }
 
 
 }
