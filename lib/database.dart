@@ -91,6 +91,15 @@ class DatabaseHelper {
     }
   }
 
+  Future<List<MealPlan>> readMealPlanFromDate(DateTime date) async {
+    final db = await instance.database;
+    final maps = await db.query(tableMealPlans,columns: MealPlanFields.values,where: '${MealPlanFields.date} =?', whereArgs: [date.toIso8601String()]);
+
+    return maps.map((json)=> MealPlan.fromMap(json)).toList();
+    
+
+  }
+
 //   {
 //   final database = openDatabase(
 //     // Set the path to the database. Note: Using the `join` function from the
