@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:html';
+
 
 import 'package:flutter_calories_calculator/food.dart';
 import 'package:flutter_calories_calculator/mealPlan.dart';
@@ -97,6 +97,14 @@ class DatabaseHelper {
 
     return maps.map((json)=> MealPlan.fromMap(json)).toList();
     
+
+  }
+  Future<List<MealPlan>> readAllMealPlans() async {
+    final db = await instance.database;
+    final maps = await db.query(tableMealPlans,columns: MealPlanFields.values,);
+
+    return maps.map((json)=> MealPlan.fromMap(json)).toList();
+
 
   }
 
