@@ -83,7 +83,7 @@ class DatabaseHelper {
 
   Future<MealPlan> readMealPlan(int id) async {
     final db = await instance.database;
-    final maps = await db.query(tableFood,columns: FoodFields.values,where: '${FoodFields.id} =?', whereArgs: [id]);
+    final maps = await db.query(tableMealPlans,columns: MealPlanFields.values,where: '${MealPlanFields.id} =?', whereArgs: [id]);
     if(maps.isNotEmpty){
       return MealPlan.fromMap(maps.first);
     }else{
