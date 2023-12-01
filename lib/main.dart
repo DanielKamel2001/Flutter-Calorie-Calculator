@@ -21,20 +21,7 @@ void main() async {
 }
 
 
-// Future<void> insertFood(Food food) async {
-//   // Get a reference to the database.
-//   final db = await database;
-//
-//   // Insert the Dog into the correct table. You might also specify the
-//   // `conflictAlgorithm` to use in case the same dog is inserted twice.
-//   //
-//   // In this case, replace any previous data.
-//   await db.insert(
-//     'foods',
-//     food.toMap(),
-//     conflictAlgorithm: ConflictAlgorithm.replace,
-//   );
-// }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
