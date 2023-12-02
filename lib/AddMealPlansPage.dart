@@ -21,8 +21,10 @@ class _AddEditNotePageState extends State<AddMealPlansPage> {
 
   final _formKey = GlobalKey<FormState>();
   late DateTime date;
-  List<int> selectedItems = [];
+  List<Food> selectedItems = [];
   bool isLoading = false;
+
+  DateTime selectedDate = DateTime.now();
 
   @override
   void initState() {
@@ -86,27 +88,135 @@ class _AddEditNotePageState extends State<AddMealPlansPage> {
     setState(() => isLoading = false);
   }
 
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(// actions: [buildButton()],
-            ),
-        body: Form(
-            key: _formKey,
-            child: Center(
-              child: isLoading
-                  ? const CircularProgressIndicator()
-                  : foods.isEmpty
-                      ? const Text(
-                          'No foods',
-                          style: TextStyle(color: Colors.white, fontSize: 24),
-                        )
-                      : SingleChildScrollView(child: foodCards(foods)),
-            )),
-      );
+      appBar: AppBar(
+        actions: [buildButton()],
+          ),
+      body: Form(
+        key: _formKey,
+        child: Center(
+            child: isLoading
+                ? const CircularProgressIndicator()
+                : foods.isEmpty
+                    ? const Text(
+                        'No foods',
+                        style: TextStyle(color: Colors.white, fontSize: 24),
+                      )
+                    : Column(
+                        children: [Text("Meal Plan For Date ${selectedDate.toLocal()}".split(' ')[0]),
+                          MultiSelectDialogField(
+                            items: buildFoodSelectors(foods),
+                            title: const Text("Foods"),
+                            selectedColor: Colors.blue,
+                            decoration: BoxDecoration(
+                              color: Colors.blue.withOpacity(0.1),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(40)),
+                              border: Border.all(
+                                color: Colors.blue,
+                                width: 2,
+                              ),
+                            ),
+                            buttonIcon: const Icon(
+                              Icons.fastfood,
+                              color: Colors.blue,
+                            ),
+                            buttonText: Text(
+                              "Food In Plan",
+                              style: TextStyle(
+                                color: Colors.blue[800],
+                                fontSize: 16,
+                              ),
+                            ),
+                            validator: (values) {
+                              if (values == null || values.isEmpty) {
+                                return "Required";
+                              }
+                              List<String> names = values.map((e) => e.name).toList();
+                              print("Checking");
+                              if (names.contains("Apple")) {
+                                return "Frogs are weird!";
+                              }
+                              return null;
+                            },
+                            // onConfirm: (values) {
+                            //   setState(() {
+                            //     _selectedAnimals3 = values;
+                            //   });
+                            //   _multiSelectKey.currentState.validate();
+                            // },
+                            onConfirm: (results) {
+                              //_selectedAnimals = results;
+                            },
+                          ),
+                          Container(
+                              child: ElevatedButton(
+                                  onPressed: () => _selectDate(context),
+                                  child: const Text('Select date')))
+                        ] //SingleChildScrollView(child: foodCards(foods)),
+                        ,
+                      )),
+      ));
+
+
+  void addOrUpdateMealPlan() async {
+    final isValid = _formKey.currentState!.validate();
+
+    if (isValid) {
+      // final isUpdating = widget.note != null;
+
+      // if (isUpdating) {
+      //   await updateNote();
+      // } else {
+        await addMealPlan();
+      // }
+
+      Navigator.of(context).pop();
+    }
+  }
+
+  Widget buildButton() {
+    final isFormValid = selectedItems.isNotEmpty && selectedDate != null;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.white,
+          backgroundColor: isFormValid ? null : Colors.grey.shade700,
+        ),
+        onPressed: addOrUpdateMealPlan,
+        child: const Text('Save'),
+      ),
+    );
+  }
 
   Widget foodCards(List<Food> foods) {
     return Column(children: foods.map((food) => foodCard(food)).toList());
   }
+
+  List<MultiSelectItem<Food>> buildFoodSelectors(List<Food> foods) {
+    // return  foods.map((food) => foodSelector(food)).toList();
+    return foods.map((food) => MultiSelectItem<Food>(food, food.name)).toList();
+  }
+
+  // foodSelector(Food food){
+  //   return
+  // }
 
   Widget foodCard(Food food) {
     return Container(
@@ -120,5 +230,27 @@ class _AddEditNotePageState extends State<AddMealPlansPage> {
             Text(food.calories.toString())
           ])
         ]));
+  }
+
+  addMealPlan() async {
+
+    var mealPlans= [];
+    for(var food in selectedItems) {
+      mealPlans.add(MealPlan(
+
+          date: "${selectedDate
+              .toLocal()
+              .day}-${selectedDate
+              .toLocal()
+              .month}-${selectedDate
+              .toLocal()
+              .year}",
+          food: food.id
+
+      ));
+    }
+    for (var meal in mealPlans){
+    await DatabaseHelper.instance.insertMealPlan(meal);
+  }
   }
 }

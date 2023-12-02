@@ -11,11 +11,11 @@ class MealPlanFields {
 }
 
 class MealPlan {
-  final int id;
+  final int? id;
   final String date;
-  final int food;
+  final int? food;
 
-  const MealPlan({required this.id, required this.date, required this.food,});
+  const MealPlan({ this.id, required this.date,  this.food,});
 
   // Convert a Dog into a Map. The keys must correspond to the names of the
   // columns in the database.
