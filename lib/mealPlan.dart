@@ -12,7 +12,7 @@ class MealPlanFields {
 
 class MealPlan {
   final int id;
-  final DateTime date;
+  final String date;
   final int food;
 
   const MealPlan({required this.id, required this.date, required this.food,});
@@ -20,16 +20,16 @@ class MealPlan {
   // Convert a Dog into a Map. The keys must correspond to the names of the
   // columns in the database.
   Map<String, dynamic> toMap() {
-    return {'id': id, 'date': date.toIso8601String(), 'food': food,};
+    return {'id': id, 'date': date, 'food': food,};
   }
 
   static MealPlan fromMap(Map<String, Object?> json) => MealPlan (
     id: json[MealPlanFields.id] as int,
-    date: DateTime.parse(json[MealPlanFields.date] as String),
+    date: (json[MealPlanFields.date] as String),
     food: json[MealPlanFields.food] as int,
   );
 
-  MealPlan copy({ int? id, DateTime? date, int? food}) =>
+  MealPlan copy({ int? id, String? date, int? food}) =>
       MealPlan(id: id ?? this.id, date: date ?? this.date, food: food ??this.food);
   // Implement toString to make it easier to see information about
   // each food when using the print statement.

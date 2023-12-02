@@ -32,7 +32,8 @@ class _MealPlanPageState extends State<MealPlansPage> {
 
     print("adding plan");
     // mealPlans = await DatabaseHelper.instance.readAllMealPlans();
-    mealPlans = [MealPlan(id: 1, date: DateTime.timestamp().toLocal(), food: 1)];
+    DateTime temp = DateTime.timestamp();
+    mealPlans = [MealPlan(id: 1, date:"${temp.toLocal().day}-${temp.toLocal().month}-${temp.toLocal().year}" , food: 1)];
 
     setState(() => isLoading = false);
   }
@@ -47,10 +48,10 @@ class _MealPlanPageState extends State<MealPlansPage> {
               ? const CircularProgressIndicator()
               : mealPlans.isEmpty
                   ? const Text(
-                      'No Notes',
+                      'No MealPlans',
                       style: TextStyle(color: Colors.white, fontSize: 24),
                     )
-                  : buildMealPlans(),
+                  : buildMealPlans(this.mealPlans),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
@@ -65,15 +66,16 @@ class _MealPlanPageState extends State<MealPlansPage> {
         ),
       );
 
-  Widget buildMealPlans() => Scaffold(
+  Widget buildMealPlans(List<MealPlan> mealPlans) => Scaffold(
+
         body: Column(
-          children: [Text("${DateTime.timestamp().toLocal()}")],
+          children:mealPlans.map((mealPlan) =>  buildMealPlanCard(mealPlan)).toList()//<Widget> [ for(var mealplan in mealPlans)buildMealPlanCard(mealPlan) ],
         ),
       );
 
-  Widget buildMealPlanCard(List<MealPlan> mealPlans, DateTime day) => Scaffold(
+  Widget buildMealPlanCard(MealPlan mealPlan) => Scaffold(
         body: Column(
-          children: [Text("${DateTime.timestamp()}")],
+          children: [Text(mealPlan.food.toString())],
         ),
       );
 }

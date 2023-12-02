@@ -91,18 +91,18 @@ class DatabaseHelper {
     }
   }
 
-  Future<List<DateTime>> readDatesOfMealPlans() async {
+  Future<List<String>> readDatesOfMealPlans() async {
     final db = await instance.database;
     final maps = await db.query(tableMealPlans,columns: [MealPlanFields.date],distinct: true );
 
-    return maps.map((json)=> DateTime.parse(MealPlan.fromMap(json).date as String)).toList();
+    return maps.map((json)=> MealPlan.fromMap(json).date as String).toList();
 
 
   }
 
-  Future<List<MealPlan>> readMealPlanFromDate(DateTime date) async {
+  Future<List<MealPlan>> readMealPlanFromDate(String date) async {
     final db = await instance.database;
-    final maps = await db.query(tableMealPlans,columns: MealPlanFields.values,where: '${MealPlanFields.date} =?', whereArgs: [date.toIso8601String()]);
+    final maps = await db.query(tableMealPlans,columns: MealPlanFields.values,where: '${MealPlanFields.date} =?', whereArgs: [date]);
 
     return maps.map((json)=> MealPlan.fromMap(json)).toList();
     
