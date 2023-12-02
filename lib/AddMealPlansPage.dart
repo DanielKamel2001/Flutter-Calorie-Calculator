@@ -45,36 +45,36 @@ class _AddEditNotePageState extends State<AddMealPlansPage> {
 
     print("Foods refreshing");
 
-    // var apple = const Food(
-    //   id: null,
-    //   name: 'Apple',
-    //   calories: 59,
-    // );
-    // var banana = const Food(
-    //   id: null,
-    //   name: 'banana',
-    //   calories: 151,
-    // );
-    // var grapes = const Food(
-    //   id: null,
-    //   name: 'grapes',
-    //   calories: 100,
-    // );
-    // var Cheeseburger = const Food(
-    //   id: null,
-    //   name: 'cheeseburger',
-    //   calories: 285,
-    // );
-    // var Pizza = const Food(
-    //   name: 'pizza',
-    //   calories: 285, id: null,
-    // );
+    var apple = const Food(
+      id: null,
+      name: 'Apple',
+      calories: 59,
+    );
+    var banana = const Food(
+      id: null,
+      name: 'banana',
+      calories: 151,
+    );
+    var grapes = const Food(
+      id: null,
+      name: 'grapes',
+      calories: 100,
+    );
+    var Cheeseburger = const Food(
+      id: null,
+      name: 'cheeseburger',
+      calories: 285,
+    );
+    var Pizza = const Food(
+      name: 'pizza',
+      calories: 285, id: null,
+    );
 
-    // await DatabaseHelper.instance.insertFood(apple);
-    // await DatabaseHelper.instance.insertFood(banana);
-    // await DatabaseHelper.instance.insertFood(Cheeseburger);
-    // await DatabaseHelper.instance.insertFood(Pizza);
-    // await DatabaseHelper.instance.insertFood(grapes);
+    await DatabaseHelper.instance.insertFood(apple);
+    await DatabaseHelper.instance.insertFood(banana);
+    await DatabaseHelper.instance.insertFood(Cheeseburger);
+    await DatabaseHelper.instance.insertFood(Pizza);
+    await DatabaseHelper.instance.insertFood(grapes);
     foods = await DatabaseHelper.instance.readAllFoods();
     // DateTime temp = DateTime.timestamp();
     // foods = [
@@ -117,7 +117,7 @@ class _AddEditNotePageState extends State<AddMealPlansPage> {
                         style: TextStyle(color: Colors.white, fontSize: 24),
                       )
                     : Column(
-                        children: [Text("Meal Plan For Date ${selectedDate.toLocal()}".split(' ')[0]),
+                        children: [const SizedBox(),Text("Meal Plan For Date ${selectedDate.toLocal()}"),
                           MultiSelectDialogField(
                             items: buildFoodSelectors(foods),
                             title: const Text("Foods"),
@@ -160,7 +160,7 @@ class _AddEditNotePageState extends State<AddMealPlansPage> {
                             //   _multiSelectKey.currentState.validate();
                             // },
                             onConfirm: (results) {
-                              //_selectedAnimals = results;
+                              selectedItems = results;
                             },
                           ),
                           Container(
@@ -175,7 +175,7 @@ class _AddEditNotePageState extends State<AddMealPlansPage> {
 
   void addOrUpdateMealPlan() async {
     final isValid = _formKey.currentState!.validate();
-
+print("checking validity: $isValid");
     if (isValid) {
       // final isUpdating = widget.note != null;
 
@@ -233,9 +233,20 @@ class _AddEditNotePageState extends State<AddMealPlansPage> {
   }
 
   addMealPlan() async {
-
+    print("num of selected Items" + selectedItems.length.toString());
+    print("num of selected date" + selectedDate.toString());
+    print("num of selected date " + "${selectedDate
+        .toLocal()
+        .day}-${selectedDate
+        .toLocal()
+        .month}-${selectedDate
+        .toLocal()
+        .year}");
     var mealPlans= [];
     for(var food in selectedItems) {
+      if (food.id != null) {
+
+
       mealPlans.add(MealPlan(
 
           date: "${selectedDate
@@ -247,7 +258,7 @@ class _AddEditNotePageState extends State<AddMealPlansPage> {
               .year}",
           food: food.id
 
-      ));
+      ));}
     }
     for (var meal in mealPlans){
     await DatabaseHelper.instance.insertMealPlan(meal);

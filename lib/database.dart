@@ -112,8 +112,9 @@ class DatabaseHelper {
 
   Future<List<String>> readDatesOfMealPlans() async {
     final db = await instance.database;
+    print("Getting Dates");
     final maps = await db.query(tableMealPlans,columns: [MealPlanFields.date],distinct: true );
-
+    print("got unique dates ${maps.length}");
     return maps.map((json)=> MealPlan.fromMap(json).date as String).toList();
 
 

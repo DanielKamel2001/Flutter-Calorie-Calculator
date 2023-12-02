@@ -24,9 +24,9 @@ class MealPlan {
   }
 
   static MealPlan fromMap(Map<String, Object?> json) => MealPlan (
-    id: json[MealPlanFields.id] as int,
+    id: json[MealPlanFields.id] as int?,
     date: (json[MealPlanFields.date] as String),
-    food: json[MealPlanFields.food] as int,
+    food: json[MealPlanFields.food] as int?,
   );
 
   MealPlan copy({ int? id, String? date, int? food}) =>
