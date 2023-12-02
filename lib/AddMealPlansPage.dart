@@ -18,7 +18,7 @@ class AddMealPlansPage extends StatefulWidget {
 
 class _AddEditNotePageState extends State<AddMealPlansPage> {
   late final List<Food> foods; //list of all foods that can be added
-
+  final TextEditingController _calTextController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   late DateTime date;
   List<Food> selectedItems = [];
@@ -67,33 +67,52 @@ class _AddEditNotePageState extends State<AddMealPlansPage> {
     );
     var Pizza = const Food(
       name: 'pizza',
-      calories: 285, id: null,
+      calories: 285,
+      id: null,
+    );
+var Egg = const Food(
+      id: null,
+      name: 'Egg',
+      calories: 78,
+    );
+    var Fish = const Food(
+      id: null,
+      name: 'Fish',
+      calories: 136,
+    );
+    var Bread = const Food(
+      id: null,
+      name: 'Bread',
+      calories: 75,
+    );
+    var Chocolate = const Food(
+      id: null,
+      name: 'Chocolate',
+      calories: 155,
+    );
+    var OrangeJ = const Food(
+      name: 'Orange Juice',
+      calories: 111,
+      id: null,
     );
 
-    await DatabaseHelper.instance.insertFood(apple);
-    await DatabaseHelper.instance.insertFood(banana);
-    await DatabaseHelper.instance.insertFood(Cheeseburger);
-    await DatabaseHelper.instance.insertFood(Pizza);
-    await DatabaseHelper.instance.insertFood(grapes);
+    // await DatabaseHelper.instance.insertFood(apple);
+    // await DatabaseHelper.instance.insertFood(banana);
+    // await DatabaseHelper.instance.insertFood(Cheeseburger);
+    // await DatabaseHelper.instance.insertFood(Pizza);
+    // await DatabaseHelper.instance.insertFood(grapes);
+    // await DatabaseHelper.instance.insertFood(Egg);
+    // await DatabaseHelper.instance.insertFood(Fish);
+    // await DatabaseHelper.instance.insertFood(Bread);
+    // await DatabaseHelper.instance.insertFood(Chocolate);
+    // await DatabaseHelper.instance.insertFood(OrangeJ);
     foods = await DatabaseHelper.instance.readAllFoods();
-    // DateTime temp = DateTime.timestamp();
-    // foods = [
-    //   const Food(
-    //       id: 1,
-    //       name:
-    //       "idk",
-    //       calories: 1)
-    // ];
 
     setState(() => isLoading = false);
   }
 
   Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: selectedDate,
-        firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101));
+    final DateTime? picked = await showDatePicker(context: context, initialDate: selectedDate, firstDate: DateTime(2015, 8), lastDate: DateTime(2101));
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
@@ -103,8 +122,7 @@ class _AddEditNotePageState extends State<AddMealPlansPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(
-        actions: [buildButton()],
+      appBar: AppBar(//actions: [buildButton()],
           ),
       body: Form(
         key: _formKey,
@@ -117,15 +135,26 @@ class _AddEditNotePageState extends State<AddMealPlansPage> {
                         style: TextStyle(color: Colors.white, fontSize: 24),
                       )
                     : Column(
-                        children: [const SizedBox(),Text("Meal Plan For Date ${selectedDate.toLocal()}"),
+                        children: [
+                          TextField(
+                            controller: _calTextController,
+                            decoration: const InputDecoration(
+                              labelText: 'Target Calories',
+                              fillColor: Colors.white,
+                              filled: true,
+                              border: OutlineInputBorder(),
+                              hintText: 'Target Calories',
+                            ),
+                          ),
+                          const SizedBox(),
+                          Text("Meal Plan For Date ${selectedDate.toLocal()}"),
                           MultiSelectDialogField(
                             items: buildFoodSelectors(foods),
                             title: const Text("Foods"),
                             selectedColor: Colors.blue,
                             decoration: BoxDecoration(
                               color: Colors.blue.withOpacity(0.1),
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(40)),
+                              borderRadius: const BorderRadius.all(Radius.circular(40)),
                               border: Border.all(
                                 color: Colors.blue,
                                 width: 2,
@@ -163,26 +192,80 @@ class _AddEditNotePageState extends State<AddMealPlansPage> {
                               selectedItems = results;
                             },
                           ),
-                          Container(
-                              child: ElevatedButton(
-                                  onPressed: () => _selectDate(context),
-                                  child: const Text('Select date')))
+                          Container(child: ElevatedButton(onPressed: () => _selectDate(context), child: const Text('Select date'))),
+                          TextButton(
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all<Color>(Colors.yellow),
+                                foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+                              ),
+                              onPressed: () {
+                                var calTotal = 0;
+                                for (var food in selectedItems) {
+                                  calTotal = calTotal + food.calories;
+                                }
+                                print(calTotal);
+                                print("ok:" + _calTextController.text);
+                                print("ok:" + int.parse(_calTextController.text).toString());
+                                if (_calTextController.text.isEmpty) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text('A Target cal is Blank'),
+                                        content: const Text('Fields are not allowed to be blank please write all fields.'),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () {
+                                              // Close the dialog
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                }
+                                if (int.parse(_calTextController.text) < calTotal) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text('A Too Many Calories'),
+                                        content: const Text('Please select fewer or different items.'),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () {
+                                              // Close the dialog
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  // dispose();
+                                  addOrUpdateMealPlan();
+                                }
+                              },
+                              child: const Text('Save Note'))
                         ] //SingleChildScrollView(child: foodCards(foods)),
                         ,
                       )),
       ));
 
-
   void addOrUpdateMealPlan() async {
     final isValid = _formKey.currentState!.validate();
-print("checking validity: $isValid");
+    print("checking validity: $isValid");
     if (isValid) {
       // final isUpdating = widget.note != null;
 
       // if (isUpdating) {
       //   await updateNote();
       // } else {
-        await addMealPlan();
+      await addMealPlan();
       // }
 
       Navigator.of(context).pop();
@@ -225,43 +308,22 @@ print("checking validity: $isValid");
         decoration: BoxDecoration(border: Border.all(color: Colors.blueAccent)),
         child: Column(children: [
           Row(children: [const Text("FOOD:"), Text(food.name)]),
-          Row(children: [
-            const Text("CALORIES:"),
-            Text(food.calories.toString())
-          ])
+          Row(children: [const Text("CALORIES:"), Text(food.calories.toString())])
         ]));
   }
 
   addMealPlan() async {
-    print("num of selected Items" + selectedItems.length.toString());
-    print("num of selected date" + selectedDate.toString());
-    print("num of selected date " + "${selectedDate
-        .toLocal()
-        .day}-${selectedDate
-        .toLocal()
-        .month}-${selectedDate
-        .toLocal()
-        .year}");
-    var mealPlans= [];
-    for(var food in selectedItems) {
+    print("num of selected Items${selectedItems.length}");
+    print("num of selected date$selectedDate");
+    print("num of selected date " + "${selectedDate.toLocal().day}-${selectedDate.toLocal().month}-${selectedDate.toLocal().year}");
+    var mealPlans = [];
+    for (var food in selectedItems) {
       if (food.id != null) {
-
-
-      mealPlans.add(MealPlan(
-
-          date: "${selectedDate
-              .toLocal()
-              .day}-${selectedDate
-              .toLocal()
-              .month}-${selectedDate
-              .toLocal()
-              .year}",
-          food: food.id
-
-      ));}
+        mealPlans.add(MealPlan(date: "${selectedDate.toLocal().day}-${selectedDate.toLocal().month}-${selectedDate.toLocal().year}", food: food.id));
+      }
     }
-    for (var meal in mealPlans){
-    await DatabaseHelper.instance.insertMealPlan(meal);
-  }
+    for (var meal in mealPlans) {
+      await DatabaseHelper.instance.insertMealPlan(meal);
+    }
   }
 }

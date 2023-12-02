@@ -12,7 +12,7 @@ class MealPlansPage extends StatefulWidget {
 
 class _MealPlanPageState extends State<MealPlansPage> {
   late List<MealPlan> mealPlans;
-  List<Widget> mealPlanCards = [];
+  List<Widget> mealPlanCards = []; // stores the cards to display
   bool isLoading = false;
 
   @override
@@ -28,6 +28,7 @@ class _MealPlanPageState extends State<MealPlansPage> {
     super.dispose();
   }
 
+  // Wait for the Meal Plan cards to be created, They each require queries and take a moment needing to be done async
   Future refreshMealPlans() async {
     setState(() => isLoading = true);
 
@@ -41,16 +42,6 @@ class _MealPlanPageState extends State<MealPlansPage> {
       print("for each date: ${date}");
       mealPlanCards.add(await mealPlanCard(date));
     }
-
-    print(mealPlans.length);
-    // DateTime temp = DateTime.timestamp();
-    // mealPlans = [
-    //   MealPlan(
-    //       id: 1,
-    //       date:
-    //           "${temp.toLocal().day}-${temp.toLocal().month}-${temp.toLocal().year}",
-    //       food: 1)
-    // ];
 
     setState(() => isLoading = false);
   }
@@ -105,6 +96,7 @@ class _MealPlanPageState extends State<MealPlansPage> {
   //   );
   // }
 
+  // Query for all the meals set on that date and add them to a container with the calorie total
   Future<Widget> mealPlanCard(String date) async {
     var meals = await DatabaseHelper.instance.readMealPlanFromDate(date);
     var foods = [];
