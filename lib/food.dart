@@ -9,7 +9,7 @@ class FoodFields {
 }
 
 class Food {
-  final int id;
+  final int? id;
   final String name;
   final int calories;
 
@@ -18,7 +18,7 @@ class Food {
   // Convert a Dog into a Map. The keys must correspond to the names of the
   // columns in the database.
   Map<String, dynamic> toMap() {
-    return {'id': id, 'name': name, 'calories': calories,};
+    return {'${FoodFields.id}': id, 'name': name, 'calories': calories};
   }
 
   static Food fromMap(Map<String, Object?> json) => Food (

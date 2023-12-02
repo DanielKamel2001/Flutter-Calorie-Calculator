@@ -22,26 +22,32 @@ class DatabaseHelper {
   }
 
   Future<Database> _initDB(String filePath) async {
+    print("db Init");
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
     return await openDatabase(path, version: 1, onCreate: _createDB);
   }
 
   Future _createDB(Database db, int version) async {
-    // final idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
-    // await db.execute( '''CREATE TABLE ${tableFood} ( ${FoodFields.id} ${idType}, ${FoodFields.name} VARCHAR, ${FoodFields.calories} INTERGER)  ; ''');
-    await db.execute("CREATE TABLE foods(id INTEGER PRIMARY KEY, name TEXT, calories INTEGER);");
-    await db.execute("CREATE TABLE mealPlans(id INTEGER PRIMARY KEY, date TEXT, calories INTEGER);");
+    print("DB Create");
+    final idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
+    await db.execute( '''CREATE TABLE ${tableFood} ( ${FoodFields.id} ${idType}, ${FoodFields.name} VARCHAR, ${FoodFields.calories} INTEGER)  ; ''');
+    // await db.execute("CREATE TABLE foods ('_id' INTEGER PRIMARY KEY, 'name' TEXT, 'calories' INTEGER )");
+    await db.execute("CREATE TABLE mealPlans ('_id' INTEGER PRIMARY KEY, 'date' TEXT, 'food' INTEGER )");
+
+
   }
 
   Future close() async {
     final db = await instance.database;
-    db.close();
+    _database = null;
+    return db.close();
   }
 
   Future<Food> insertFood(Food food) async {
     // Get a reference to the database.
     final db = await database;
+    print("inserting food");
 
     // Insert the Food into the correct table. You might also specify the
     // `conflictAlgorithm` to use in case the same food is inserted twice.
@@ -52,7 +58,7 @@ class DatabaseHelper {
       food.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
-    return food.copy();
+    return food.copy(id:id);
   }
 
   Future<MealPlan> insertMealPlan(MealPlan mealPlan) async {
@@ -73,6 +79,7 @@ class DatabaseHelper {
 
   Future<Food> readFood(int id) async {
     final db = await instance.database;
+    print("reading food $id");
     final maps = await db.query(tableFood,columns: FoodFields.values,where: '${FoodFields.id} =?', whereArgs: [id]);
     if(maps.isNotEmpty){
       return Food.fromMap(maps.first);
@@ -80,6 +87,18 @@ class DatabaseHelper {
       throw Exception('ID $id is not found');
     }
   }
+
+  Future<List<Food>> readAllFoods() async {
+    final db = await instance.database;
+    print("Foods reading all foods");
+    final maps = await db.query(tableFood,columns: FoodFields.values);
+
+
+    print(maps.length);
+    return maps.map((json)=> Food.fromMap(json)).toList();
+  }
+
+
 
   Future<MealPlan> readMealPlan(int id) async {
     final db = await instance.database;
@@ -113,8 +132,6 @@ class DatabaseHelper {
     final maps = await db.query(tableMealPlans,columns: MealPlanFields.values,);
 
     return maps.map((json)=> MealPlan.fromMap(json)).toList();
-
-
   }
 
   Future<int> updateMealPlan(MealPlan mealPlan)async{

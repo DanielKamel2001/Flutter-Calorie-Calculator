@@ -33,10 +33,17 @@ class _MealPlanPageState extends State<MealPlansPage> {
     print("adding plan");
     // mealPlans = await DatabaseHelper.instance.readAllMealPlans();
     DateTime temp = DateTime.timestamp();
-    mealPlans = [MealPlan(id: 1, date:"${temp.toLocal().day}-${temp.toLocal().month}-${temp.toLocal().year}" , food: 1)];
+    mealPlans = [
+      MealPlan(
+          id: 1,
+          date:
+              "${temp.toLocal().day}-${temp.toLocal().month}-${temp.toLocal().year}",
+          food: 1)
+    ];
 
     setState(() => isLoading = false);
   }
+
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -66,16 +73,13 @@ class _MealPlanPageState extends State<MealPlansPage> {
         ),
       );
 
-  Widget buildMealPlans(List<MealPlan> mealPlans) => Scaffold(
-
-        body: Column(
-          children:mealPlans.map((mealPlan) =>  buildMealPlanCard(mealPlan)).toList()//<Widget> [ for(var mealplan in mealPlans)buildMealPlanCard(mealPlan) ],
-        ),
+  Widget buildMealPlans(List<MealPlan> mealPlans) => Column(
+      children: mealPlans
+          .map((mealPlan) => buildMealPlanCard(mealPlan))
+          .toList() //<Widget> [ for(var mealplan in mealPlans)buildMealPlanCard(mealPlan) ],
       );
 
-  Widget buildMealPlanCard(MealPlan mealPlan) => Scaffold(
-        body: Column(
-          children: [Text(mealPlan.food.toString())],
-        ),
+  Widget buildMealPlanCard(MealPlan mealPlan) => Column(
+        children: [Text(mealPlan.food.toString())],
       );
 }

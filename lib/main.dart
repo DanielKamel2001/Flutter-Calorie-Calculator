@@ -12,37 +12,6 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  var apple = const Food(
-    id: 0,
-    name: 'Apple',
-    calories: 59,
-  );
-var banana = const Food(
-    id: 0,
-    name: 'banana',
-    calories: 151,
-  );
-var grapes = const Food(
-    id: 0,
-    name: 'grapes',
-    calories: 100,
-  );
-var Cheeseburger = const Food(
-    id: 0,
-    name: 'cheeseburger',
-    calories: 285,
-  );
-var Pizza = const Food(
-    id: 0,
-    name: 'pizza',
-    calories: 285,
-  );
-
-  await DatabaseHelper.instance.insertFood(apple);
-  await DatabaseHelper.instance.insertFood(banana);
-  await DatabaseHelper.instance.insertFood(Cheeseburger);
-  await DatabaseHelper.instance.insertFood(Pizza);
-  await DatabaseHelper.instance.insertFood(grapes);
 
 
 
@@ -68,8 +37,8 @@ class MyApp extends StatelessWidget {
       home: const MealPlansPage(),//const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
-  
-  
+
+
 }
 
 class MyHomePage extends StatefulWidget {
